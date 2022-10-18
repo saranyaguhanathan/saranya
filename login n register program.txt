@@ -1,0 +1,113 @@
+def new_user_registration():
+    f=open("access_file.txt","r")
+    #user_name=input(":Enter your  2.  3.")
+    print("Enter your user_name: by satisfing following conditions...")
+    print("#################################################")
+    print("1.username must not start with special characters or numbers.")
+    print("2.There should not be any '.' immediately after @")
+    print("3.There must be atleast one character between @ and .")
+    print("#############################################")
+    user_name=input("Enter your user_name:").strip()
+    details=[]
+    spc=['@','#','$','%','_','*','&','-','!','^',':',';',',','.','(',')','{','}','[',']','?','/','~','+','|','>','<','=']
+    for l in f:
+        us=l.split(",")
+        details.append(us[0])
+
+    if user_name in details:
+        print("User_name already exist,Try with other user_name")
+        new_user_registration()
+    elif user_name.count('@')!=1 and user_name.count('.')!=1:
+        print("User_name must contain atleast one '@'and '.' ")
+        new_user_registration()
+    elif (user_name.index('.'))-(user_name.index('@'))==1:
+        print(" In your user_name: '.' must not be present immediately after '@' ")
+        new_user_registration()
+    elif (user_name[0] in spc):
+        print("user_name must not start with special characters")
+        new_user_registration()
+    elif (user_name[0].isdigit()):
+        print("user_name must not start with digits")
+        new_user_registration()
+    else:
+        print("you sucessfully created user_name...")
+
+    password=input("create your password:")
+    flag=False
+    if len(password)<5 and len(password)>16:
+        print("password length does not match with the given condition...Try again")
+        new_user_registration()
+    if len(password)>=5 and len(password)<=16:
+        l, u, d, sp = 0, 0, 0, 0
+        for i in password:
+            if i.isdigit():
+                d=d+1
+            if i.islower():
+                l=l+1
+            if i.isupper():
+                u=u+1
+            if i in spc:
+                sp=sp+1
+            if d>=1 and l>=1 and u>=1 and sp>=1 and (d+l+u+sp)==len(password):
+                flag=True
+    if flag:
+        password1=input("Re-enter your password to confirm:")
+        while(password1!=password):
+            print("password mismatch,Try again..")
+            password1=input("Try again:enter your password correctly:")
+
+    else:
+        print("Try again")
+        new_user_registration()
+    f=open("access_file.txt","a")
+    password=password.strip()
+    f.write(user_name+','+password+'\n')
+    f.close()
+    print("You successfully created your account...")
+
+
+def gainaccess():
+    user_name=input("Enter your username:")
+    user_name=user_name.strip()
+    f=open("access_file.txt",'r')
+    u=[]
+    for line in f:
+        us=line.split(",")
+        u.append(us[0])
+    if user_name in u:
+        pw=input("Enter your password:")
+        pw=pw.strip()
+        f=open("access_file.txt",'r').readlines()
+        for l in f:
+            l=l.strip()
+            detail=l.split(",")
+            if (user_name == detail[0] and pw == detail[1]):
+                print("your login sucess...")
+                print("*********************************************")
+                print(f'Hi {detail[0]}...')
+            else:
+                if user_name == detail[0]:
+                    old_password = detail[1]
+                    FP=input("Forget Password YES or NO:")
+                    if FP=='YES':
+                        print(f'You sucessfully retrieved your  password is {old_password}')
+                        print("You can log in now...")
+                        invitation()
+                    else:
+                        print("Try again")
+                        invitation()
+    else:
+        print("User_name not registered,Register first")
+        new_user_registration()
+def invitation():
+    print("You are invited to join the page...")
+    print("You can login if you already have account or if you are new user than you need to register first")
+    Choice=input("Login|Register[L or R ]:")
+    if Choice=="L":
+        gainaccess()
+    elif Choice=="R":
+        new_user_registration()
+    else:
+        print("Invalid choice,Enter your choice correctly")
+        invitation()
+invitation()
