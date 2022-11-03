@@ -1,0 +1,126 @@
+
+
+#CRUD operation in a telephone directory
+#create database
+#create collection
+#insert record into collection
+import pymongo
+
+myclient = pymongo.MongoClient("mongodb://localhost:27017/")
+mydb = myclient["project2"]
+mycol = mydb["phonebook"]
+
+mylist = [
+    {"name": "Amy", "phone_no":7791919191,"address": "Apple st 652"},
+    {"name": "Hannah", "phone_no":7282963221,"address": "Mountain 21"},
+    {"name": "Micheal","phone_no":7791915191, "address": "valley 345"},
+    {"name": "sandy","phone_no":7781919111, "address": "Ocean blvd 2"},
+    {"name": "Betty", "phone_no":7594119191,"address": "Green Grass 1"},
+    {"name": "Richard","phone_no":7291918991, "address": "Sky st 331"},
+    {"name": "Susan", "phone_no":7291259191,"address": "One Way 98"},
+    {"name":"Vicky" ,"phone_no":7091919191, "address": "Yellow Garden 2"},
+    {"name": "Ben" ,"phone_no":7991919100, "address": "Park Lane 38"},
+    {"name": "William","phone_no":7791009191, "address":"Central st 954"},
+    {"name": "Chuck", "phone_no":7291919001,"address": "Main Road 989"},
+    {"name": "Viola","phone_no":7491911234, "address": "Sideway 1633"}
+
+]
+x=mycol.insert_many(mylist)
+#print list of id values of the inserted documents
+
+print(x.inserted_ids)
+
+[ObjectId('63587acf6a94c577ea9cbee3'), ObjectId('63587acf6a94c577ea9cbee4'), ObjectId('63587acf6a94c577ea9cbee5'), ObjectId('63587acf6a94c577ea9cbee6'), ObjectId('63587acf6a94c577ea9cbee7'), ObjectId('63587acf6a94c577ea9cbee8'), ObjectId('63587acf6a94c577ea9cbee9'), ObjectId('63587acf6a94c577ea9cbeea'), ObjectId('63587acf6a94c577ea9cbeeb'), ObjectId('63587acf6a94c577ea9cbeec'), ObjectId('63587acf6a94c577ea9cbeed'), ObjectId('63587acf6a94c577ea9cbeee')]
+
+for i in mycol.find():
+    print(i)
+
+{'_id': ObjectId('63587acf6a94c577ea9cbee3'), 'name': 'Amy', 'phone_no': 7791919191, 'address': 'Apple st 652'}
+{'_id': ObjectId('63587acf6a94c577ea9cbee4'), 'name': 'Hannah', 'phone_no': 7282963221, 'address': 'Mountain 21'}
+{'_id': ObjectId('63587acf6a94c577ea9cbee5'), 'name': 'Micheal', 'phone_no': 7791915191, 'address': 'valley 345'}
+{'_id': ObjectId('63587acf6a94c577ea9cbee6'), 'name': 'sandy', 'phone_no': 7781919111, 'address': 'Ocean blvd 2'}
+{'_id': ObjectId('63587acf6a94c577ea9cbee7'), 'name': 'Betty', 'phone_no': 7594119191, 'address': 'Green Grass 1'}
+{'_id': ObjectId('63587acf6a94c577ea9cbee8'), 'name': 'Richard', 'phone_no': 7291918991, 'address': 'Sky st 331'}
+{'_id': ObjectId('63587acf6a94c577ea9cbee9'), 'name': 'Susan', 'phone_no': 7291259191, 'address': 'One Way 98'}
+{'_id': ObjectId('63587acf6a94c577ea9cbeea'), 'name': 'Vicky', 'phone_no': 7091919191, 'address': 'Yellow Garden 2'}
+{'_id': ObjectId('63587acf6a94c577ea9cbeeb'), 'name': 'Ben', 'phone_no': 7991919100, 'address': 'Park Lane 38'}
+{'_id': ObjectId('63587acf6a94c577ea9cbeec'), 'name': 'William', 'phone_no': 7791009191, 'address': 'Central st 954'}
+{'_id': ObjectId('63587acf6a94c577ea9cbeed'), 'name': 'Chuck', 'phone_no': 7291919001, 'address': 'Main Road 989'}
+{'_id': ObjectId('63587acf6a94c577ea9cbeee'), 'name': 'Viola', 'phone_no': 7491911234, 'address': 'Sideway 1633'}
+
+#query to read all records in collection
+for x in mycol.find({},{"_id": 0,"name":1,"phone_no":1, "address":1}):
+    print(x)
+
+{'name': 'Amy', 'phone_no': 7791919191, 'address': 'Apple st 652'}
+{'name': 'Hannah', 'phone_no': 7282963221, 'address': 'Mountain 21'}
+{'name': 'Micheal', 'phone_no': 7791915191, 'address': 'valley 345'}
+{'name': 'sandy', 'phone_no': 7781919111, 'address': 'Ocean blvd 2'}
+{'name': 'Betty', 'phone_no': 7594119191, 'address': 'Green Grass 1'}
+{'name': 'Richard', 'phone_no': 7291918991, 'address': 'Sky st 331'}
+{'name': 'Susan', 'phone_no': 7291259191, 'address': 'One Way 98'}
+{'name': 'Vicky', 'phone_no': 7091919191, 'address': 'Yellow Garden 2'}
+{'name': 'Ben', 'phone_no': 7991919100, 'address': 'Park Lane 38'}
+{'name': 'William', 'phone_no': 7791009191, 'address': 'Central st 954'}
+{'name': 'Chuck', 'phone_no': 7291919001, 'address': 'Main Road 989'}
+{'name': 'Viola', 'phone_no': 7491911234, 'address': 'Sideway 1633'}
+
+#query to find a record in collection
+for x in mycol.find({"address":"Yellow Garden 2"},{"_id":0,"name":1,"phone_no":1,"address":1}):
+    print(x)
+
+{'name': 'Vicky', 'phone_no': 7091919191, 'address': 'Yellow Garden 2'}
+
+myquery = {"address":"valley 345"}
+newvalues={"$set":{"address":"Canyon 123"}}
+#The first parameter of the update_one() method is a query object defining which document to
+#update.The second parameter is an objec defining the new values of the document.
+#If the query finds more than one record,only the first occurence is updated
+
+mycol.update_one(myquery, newvalues)
+#print records after the update:
+
+<pymongo.results.UpdateResult at 0x135df5da730>
+
+#print customers after the update:
+for x in mycol.find():
+    print(x)
+
+{'_id': ObjectId('63587acf6a94c577ea9cbee3'), 'name': 'Amy', 'phone_no': 7791919191, 'address': 'Apple st 652'}
+{'_id': ObjectId('63587acf6a94c577ea9cbee4'), 'name': 'Hannah', 'phone_no': 7282963221, 'address': 'Mountain 21'}
+{'_id': ObjectId('63587acf6a94c577ea9cbee5'), 'name': 'Micheal', 'phone_no': 7791915191, 'address': 'Canyon 123'}
+{'_id': ObjectId('63587acf6a94c577ea9cbee6'), 'name': 'sandy', 'phone_no': 7781919111, 'address': 'Ocean blvd 2'}
+{'_id': ObjectId('63587acf6a94c577ea9cbee7'), 'name': 'Betty', 'phone_no': 7594119191, 'address': 'Green Grass 1'}
+{'_id': ObjectId('63587acf6a94c577ea9cbee8'), 'name': 'Richard', 'phone_no': 7291918991, 'address': 'Sky st 331'}
+{'_id': ObjectId('63587acf6a94c577ea9cbee9'), 'name': 'Susan', 'phone_no': 7291259191, 'address': 'One Way 98'}
+{'_id': ObjectId('63587acf6a94c577ea9cbeea'), 'name': 'Vicky', 'phone_no': 7091919191, 'address': 'Yellow Garden 2'}
+{'_id': ObjectId('63587acf6a94c577ea9cbeeb'), 'name': 'Ben', 'phone_no': 7991919100, 'address': 'Park Lane 38'}
+{'_id': ObjectId('63587acf6a94c577ea9cbeec'), 'name': 'William', 'phone_no': 7791009191, 'address': 'Central st 954'}
+{'_id': ObjectId('63587acf6a94c577ea9cbeed'), 'name': 'Chuck', 'phone_no': 7291919001, 'address': 'Main Road 989'}
+{'_id': ObjectId('63587acf6a94c577ea9cbeee'), 'name': 'Viola', 'phone_no': 7491911234, 'address': 'Sideway 1633'}
+
+#when finding documents in a collection, you can filter the result by using a query object
+#first argument of the find() method is a query object, and is used to limit the search
+myquery = { "address" : "Mountain 21"}
+mycol.delete_one(myquery)
+print("sucessfully deleted")
+
+sucessfully deleted
+
+for i in mycol.find():
+    print(i)
+
+{'_id': ObjectId('63587acf6a94c577ea9cbee3'), 'name': 'Amy', 'phone_no': 7791919191, 'address': 'Apple st 652'}
+{'_id': ObjectId('63587acf6a94c577ea9cbee5'), 'name': 'Micheal', 'phone_no': 7791915191, 'address': 'Canyon 123'}
+{'_id': ObjectId('63587acf6a94c577ea9cbee6'), 'name': 'sandy', 'phone_no': 7781919111, 'address': 'Ocean blvd 2'}
+{'_id': ObjectId('63587acf6a94c577ea9cbee7'), 'name': 'Betty', 'phone_no': 7594119191, 'address': 'Green Grass 1'}
+{'_id': ObjectId('63587acf6a94c577ea9cbee8'), 'name': 'Richard', 'phone_no': 7291918991, 'address': 'Sky st 331'}
+{'_id': ObjectId('63587acf6a94c577ea9cbee9'), 'name': 'Susan', 'phone_no': 7291259191, 'address': 'One Way 98'}
+{'_id': ObjectId('63587acf6a94c577ea9cbeea'), 'name': 'Vicky', 'phone_no': 7091919191, 'address': 'Yellow Garden 2'}
+{'_id': ObjectId('63587acf6a94c577ea9cbeeb'), 'name': 'Ben', 'phone_no': 7991919100, 'address': 'Park Lane 38'}
+{'_id': ObjectId('63587acf6a94c577ea9cbeec'), 'name': 'William', 'phone_no': 7791009191, 'address': 'Central st 954'}
+{'_id': ObjectId('63587acf6a94c577ea9cbeed'), 'name': 'Chuck', 'phone_no': 7291919001, 'address': 'Main Road 989'}
+{'_id': ObjectId('63587acf6a94c577ea9cbeee'), 'name': 'Viola', 'phone_no': 7491911234, 'address': 'Sideway 1633'}
+
+ 
+
